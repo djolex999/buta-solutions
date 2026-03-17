@@ -9,8 +9,8 @@ const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
 
 const cookieOptions = {
   httpOnly: true,
-  sameSite: 'lax' as const,
-  secure: process.env.NODE_ENV === 'production',
+  sameSite: 'none' as const,
+  secure: true,
 };
 
 export const login = async (req: Request, res: Response): Promise<void> => {
