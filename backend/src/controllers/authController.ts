@@ -4,14 +4,6 @@ import jwt from 'jsonwebtoken';
 import Admin from '../models/Admin';
 import { AuthRequest } from '../middleware/authMiddleware';
 
-const COOKIE_NAME = 'token';
-const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 * 1000;
-
-const cookieOptions = {
-  httpOnly: true,
-  sameSite: 'none' as const,
-  secure: true,
-};
 
 export const login = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body as { email?: unknown; password?: unknown };
@@ -53,10 +45,9 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       expiresIn: '7d',
     });
 
-    res.cookie(COOKIE_NAME, token, { ...cookieOptions, maxAge: COOKIE_MAX_AGE });
-
     res.json({
-      message: 'Login successful',
+      success: true,
+      token,
       admin: { id: adminId, email: admin.email },
     });
   } catch (error) {
@@ -66,8 +57,7 @@ export const login = async (req: Request, res: Response): Promise<void> => {
 };
 
 export const logout = (_req: Request, res: Response): void => {
-  res.clearCookie(COOKIE_NAME, cookieOptions);
-  res.json({ message: 'Logged out' });
+  res.json({ success: true });
 };
 
 export const me = (req: AuthRequest, res: Response): void => {

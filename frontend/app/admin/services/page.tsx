@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import toast from "react-hot-toast";
 import { Service } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/auth";
 import Modal from "@/components/admin/Modal";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
@@ -45,7 +46,7 @@ export default function AdminServicesPage() {
     setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/api/services`, {
-        credentials: "include",
+        headers: { ...getAuthHeaders() },
         cache: "no-store",
       });
       if (res.ok) setServices(await res.json());
@@ -96,8 +97,7 @@ export default function AdminServicesPage() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify(form),
       });
 
@@ -121,7 +121,7 @@ export default function AdminServicesPage() {
     try {
       const res = await fetch(`${BASE_URL}/api/services/${deleteTarget._id}`, {
         method: "DELETE",
-        credentials: "include",
+        headers: { ...getAuthHeaders() },
       });
       if (!res.ok) throw new Error("Failed to delete service");
       toast.success("Service deleted");

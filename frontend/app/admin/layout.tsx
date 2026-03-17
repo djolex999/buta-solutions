@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Toaster } from "react-hot-toast";
 import { logout } from "@/lib/auth";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const navItems = [
   {
@@ -48,6 +49,23 @@ const navItems = [
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const isLoginPage = pathname === '/admin/login';
+  const { checking } = useAdminAuth();
+
+  // Show nothing while checking auth (except on login page)
+  if (!isLoginPage && checking) {
+    return <div className="min-h-screen bg-background" />;
+  }
+
+  // Login page renders without sidebar
+  if (isLoginPage) {
+    return (
+      <>
+        {children}
+        <Toaster position="top-right" toastOptions={{ style: { background: '#111', color: '#FAFAFA', border: '1px solid #222', borderRadius: '0.5rem' }, success: { iconTheme: { primary: '#F59E0B', secondary: '#0A0A0A' } } }} />
+      </>
+    );
+  }
 
   const isActive = (href: string) => {
     if (href === "/admin") return pathname === "/admin";

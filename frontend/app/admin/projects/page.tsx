@@ -3,6 +3,7 @@
 import { useState, useEffect, FormEvent } from "react";
 import toast from "react-hot-toast";
 import { Project, Service } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/auth";
 import Modal from "@/components/admin/Modal";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
 
@@ -52,8 +53,8 @@ export default function AdminProjectsPage() {
     setLoading(true);
     try {
       const [pRes, sRes] = await Promise.all([
-        fetch(`${BASE_URL}/api/projects`, { credentials: "include", cache: "no-store" }),
-        fetch(`${BASE_URL}/api/services`, { credentials: "include", cache: "no-store" }),
+        fetch(`${BASE_URL}/api/projects`, { headers: { ...getAuthHeaders() }, cache: "no-store" }),
+        fetch(`${BASE_URL}/api/services`, { headers: { ...getAuthHeaders() }, cache: "no-store" }),
       ]);
       if (pRes.ok) setProjects(await pRes.json());
       if (sRes.ok) setServices(await sRes.json());
@@ -127,8 +128,7 @@ export default function AdminProjectsPage() {
 
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify(payload),
       });
 
@@ -152,7 +152,7 @@ export default function AdminProjectsPage() {
     try {
       const res = await fetch(`${BASE_URL}/api/projects/${deleteTarget._id}`, {
         method: "DELETE",
-        credentials: "include",
+        headers: { ...getAuthHeaders() },
       });
       if (!res.ok) throw new Error("Failed to delete project");
       toast.success("Project deleted");

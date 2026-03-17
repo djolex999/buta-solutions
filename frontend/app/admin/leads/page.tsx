@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { LeadItem } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/auth";
 import Modal from "@/components/admin/Modal";
 import StatusBadge from "@/components/admin/StatusBadge";
 import ConfirmDialog from "@/components/admin/ConfirmDialog";
@@ -36,7 +37,7 @@ export default function AdminLeadsPage() {
     setLoading(true);
     try {
       const res = await fetch(`${BASE_URL}/api/leads`, {
-        credentials: "include",
+        headers: { ...getAuthHeaders() },
         cache: "no-store",
       });
       if (res.ok) setLeads(await res.json());
@@ -57,8 +58,7 @@ export default function AdminLeadsPage() {
     try {
       const res = await fetch(`${BASE_URL}/api/leads/${leadId}/status`, {
         method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: { "Content-Type": "application/json", ...getAuthHeaders() },
         body: JSON.stringify({ status }),
       });
       if (!res.ok) throw new Error("Failed to update status");
@@ -83,7 +83,7 @@ export default function AdminLeadsPage() {
     try {
       const res = await fetch(`${BASE_URL}/api/leads/${deleteTarget._id}`, {
         method: "DELETE",
-        credentials: "include",
+        headers: { ...getAuthHeaders() },
       });
       if (!res.ok) throw new Error("Failed to delete lead");
       toast.success("Lead deleted");
