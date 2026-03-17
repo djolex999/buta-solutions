@@ -2,10 +2,12 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 import connectDB from '../config/db';
 import Service from '../models/Service';
 import Project from '../models/Project';
 import Lead from '../models/Lead';
+import Admin from '../models/Admin';
 
 interface ServiceSeed {
   name: string;
@@ -178,6 +180,18 @@ const seed = async (): Promise<void> => {
     }));
 
     await Project.insertMany(projectDocs);
+
+    console.log('Seeding admin...');
+    const adminEmail = 'admin@butasolutions.com';
+    const existingAdmin = await Admin.findOne({ email: adminEmail });
+
+    if (!existingAdmin) {
+      const hashedPassword = await bcrypt.hash('Admin1234!', 10);
+      await Admin.create({ email: adminEmail, password: hashedPassword });
+      console.log('  - 1 admin created');
+    } else {
+      console.log('  - admin already exists');
+    }
 
     console.log('Seed completed successfully!');
     console.log(`  - ${createdServices.length} services created`);

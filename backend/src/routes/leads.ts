@@ -1,9 +1,17 @@
 import { Router } from 'express';
 import { body } from 'express-validator';
-import { createLead } from '../controllers/leadsController';
+import {
+  createLead,
+  getLeads,
+  deleteLead,
+  updateLeadStatus,
+  getLeadStats,
+} from '../controllers/leadsController';
+import authMiddleware from '../middleware/authMiddleware';
 
 const router = Router();
 
+// Public routes
 router.post(
   '/',
   [
@@ -13,5 +21,11 @@ router.post(
   ],
   createLead
 );
+router.get('/', getLeads);
+
+// Protected routes
+router.get('/stats', authMiddleware, getLeadStats);
+router.delete('/:id', authMiddleware, deleteLead);
+router.patch('/:id/status', authMiddleware, updateLeadStatus);
 
 export default router;

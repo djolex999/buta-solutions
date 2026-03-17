@@ -40,6 +40,15 @@ export interface LeadResponse {
   createdAt: string;
 }
 
+export interface LeadItem {
+  _id: string;
+  name: string;
+  email: string;
+  message: string;
+  status: 'new' | 'contacted' | 'closed';
+  createdAt: string;
+}
+
 export async function getServices(): Promise<Service[]> {
   const res = await fetch(`${BASE_URL}/api/services`, {
     next: { revalidate: 60 },

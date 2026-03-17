@@ -30,3 +30,47 @@ export const getServiceBySlug = async (req: Request, res: Response): Promise<voi
     res.status(500).json({ error: 'Failed to fetch service', details: message });
   }
 };
+
+export const createService = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const service = await Service.create(req.body);
+    res.status(201).json(service);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: 'Failed to create service', details: message });
+  }
+};
+
+export const updateService = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const service = await Service.findByIdAndUpdate(id, req.body, { new: true, runValidators: true });
+
+    if (!service) {
+      res.status(404).json({ error: 'Service not found' });
+      return;
+    }
+
+    res.json(service);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: 'Failed to update service', details: message });
+  }
+};
+
+export const deleteService = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const service = await Service.findByIdAndDelete(id);
+
+    if (!service) {
+      res.status(404).json({ error: 'Service not found' });
+      return;
+    }
+
+    res.json({ message: 'Service deleted successfully' });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    res.status(500).json({ error: 'Failed to delete service', details: message });
+  }
+};

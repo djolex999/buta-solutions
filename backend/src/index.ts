@@ -4,10 +4,12 @@ dotenv.config();
 import express, { Request, Response, NextFunction } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import connectDB from './config/db';
 import servicesRouter from './routes/services';
 import projectsRouter from './routes/projects';
 import leadsRouter from './routes/leads';
+import authRouter from './routes/auth';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -17,11 +19,14 @@ app.use(helmet());
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+    credentials: true,
   })
 );
 app.use(express.json());
+app.use(cookieParser());
 
 // Routes
+app.use('/api/auth', authRouter);
 app.use('/api/services', servicesRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/leads', leadsRouter);
