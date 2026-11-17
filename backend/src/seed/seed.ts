@@ -183,10 +183,14 @@ const seed = async (): Promise<void> => {
 
     console.log('Seeding admin...');
     const adminEmail = 'admin@butasolutions.com';
+    const adminPassword = process.env.SEED_ADMIN_PASSWORD;
     const existingAdmin = await Admin.findOne({ email: adminEmail });
 
     if (!existingAdmin) {
-      const hashedPassword = await bcrypt.hash('Admin1234!', 10);
+      if (!adminPassword) {
+        throw new Error('SEED_ADMIN_PASSWORD is not set; refusing to create admin without a password');
+      }
+      const hashedPassword = await bcrypt.hash(adminPassword, 10);
       await Admin.create({ email: adminEmail, password: hashedPassword });
       console.log('  - 1 admin created');
     } else {

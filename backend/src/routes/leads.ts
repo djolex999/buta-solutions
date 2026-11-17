@@ -21,9 +21,8 @@ router.post(
   ],
   createLead
 );
-router.get('/', getLeads);
-
 // Protected routes
+router.get('/', authMiddleware, getLeads);
 router.get('/stats', authMiddleware, getLeadStats);
 router.delete('/:id', authMiddleware, deleteLead);
 router.patch('/:id/status', authMiddleware, updateLeadStatus);

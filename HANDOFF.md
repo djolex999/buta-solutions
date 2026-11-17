@@ -34,10 +34,10 @@ Key dirs: `frontend/app/admin/`, `frontend/hooks/useAdminAuth.ts`, `frontend/lib
 ## Next Steps
 
 1. **Verify Render redeploy** — confirm backend is live and `GET /api/health` returns 200 after the auth + CORS changes.
-2. **Test admin login end-to-end** on production (Vercel → Render) using `admin@butasolutions.com` / `Admin1234!`.
+2. **Test admin login end-to-end** on production (Vercel → Render) using `admin@butasolutions.com` and the current admin password (not stored in the repo).
 3. **Cloudinary image uploads** — `Project.image` is currently a plain URL string. The spec called for Cloudinary but it was never wired up. Add upload in `app/admin/projects/page.tsx` modal.
-4. **Dashboard page auth** — `app/admin/page.tsx` is a server component fetching public endpoints. If leads ever become auth-protected on the backend, this page will need to become a client component using `getAuthHeaders()`.
-5. **Change admin password** — seeded credential (`Admin1234!`) is in `CLAUDE.md` and the seed script. Add a change-password route or update the seed before going live publicly.
+4. **Dashboard page auth** — done: `GET /api/leads` is now auth-protected and `app/admin/page.tsx` is a client component fetching leads with `getAuthHeaders()`.
+5. **Rotate admin password** — the old seeded password was committed (still in git history). Rotate it on the production DB. Seed now reads `SEED_ADMIN_PASSWORD`; a change-password route is still missing.
 
 ---
 
