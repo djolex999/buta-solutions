@@ -36,8 +36,8 @@ Single Express app (`src/index.ts`): CORS → helmet → routes.
 
 **Route protection**:
 
-- Public: `GET /api/services`, `GET /api/projects`, `GET /api/leads`, `POST /api/leads`
-- Protected: all `POST/PUT/DELETE` on services/projects, `DELETE/PATCH` on leads, `GET /api/auth/me`
+- Public: `GET /api/services`, `GET /api/projects`, `POST /api/leads`
+- Protected: all `POST/PUT/DELETE` on services/projects, `GET/DELETE/PATCH` on leads (incl. `/stats`), `GET /api/auth/me`
 
 **Data model**: Mongoose in `src/models/`. Projects embed `services` as array of ObjectId refs, always `.populate('services')` — frontend receives fully populated service objects.
 
@@ -66,6 +66,7 @@ RESEND_API_KEY       # Email (optional, non-blocking failures)
 RESEND_FROM_EMAIL    # Email sender
 PORT                 # Defaults to 5000
 CORS_ORIGIN          # Must exactly match frontend origin (e.g., https://yourapp.vercel.app)
+SEED_ADMIN_PASSWORD  # Password for the admin created by `npm run seed` (required only when seeding a new admin)
 ```
 
 **Frontend** (`.env.local`):
@@ -79,7 +80,7 @@ NEXT_PUBLIC_API_URL  # Backend base URL, no trailing slash
 - **No cookies**: localStorage + Bearer tokens solve cross-origin issues (Vercel ↔ Render).
 - **CORS_ORIGIN**: no wildcard when making credentialed requests; Bearer tokens allow `*` if needed.
 - **Seed destructive**: `npm run seed` clears all collections before inserting. Don't run on production unless intentional.
-- **Admin credentials**: `admin@butasolutions.com` / `Admin1234!` (seeded; change in production).
+- **Admin credentials**: `admin@butasolutions.com`, password from `SEED_ADMIN_PASSWORD` at seed time. Never commit the password.
 - **Monorepo**: two independent apps, no shared packages. All commands run from respective directory.
 
 ## Git Workflow

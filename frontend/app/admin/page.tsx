@@ -1,11 +1,15 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import { Service, Project, LeadItem } from "@/lib/api";
+import { getAuthHeaders } from "@/lib/auth";
 import StatusBadge from "@/components/admin/StatusBadge";
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
 
-async function fetchSafe<T>(url: string): Promise<T | null> {
+async function fetchSafe<T>(url: string, headers: Record<string, string> = {}): Promise<T | null> {
   try {
-    const res = await fetch(url, { cache: "no-store" });
+    const res = await fetch(url, { cache: "no-store", headers });
     if (!res.ok) return null;
     return res.json();
   } catch {
@@ -21,12 +25,22 @@ function formatDate(dateStr: string) {
   });
 }
 
-export default async function AdminDashboardPage() {
-  const [services, projects, leads] = await Promise.all([
-    fetchSafe<Service[]>(`${BASE_URL}/api/services`),
-    fetchSafe<Project[]>(`${BASE_URL}/api/projects`),
-    fetchSafe<LeadItem[]>(`${BASE_URL}/api/leads`),
-  ]);
+export default function AdminDashboardPage() {
+  const [services, setServices] = useState<Service[] | null>(null);
+  const [projects, setProjects] = useState<Project[] | null>(null);
+  const [leads, setLeads] = useState<LeadItem[] | null>(null);
+
+  useEffect(() => {
+    Promise.all([
+      fetchSafe<Service[]>(`${BASE_URL}/api/services`),
+      fetchSafe<Project[]>(`${BASE_URL}/api/projects`),
+      fetchSafe<LeadItem[]>(`${BASE_URL}/api/leads`, getAuthHeaders()),
+    ]).then(([s, p, l]) => {
+      setServices(s);
+      setProjects(p);
+      setLeads(l);
+    });
+  }, []);
 
   const totalServices = services?.length ?? 0;
   const totalProjects = projects?.length ?? 0;
